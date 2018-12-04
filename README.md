@@ -1,6 +1,8 @@
 # The-Avocadoers
 Repo for CSCI 4502/5502 Final Project 
 
+I am running python3 for the code. Please ensure you are as well to avoid getting errors.
+
 Please put changes in a branch and then merge the branch later
 
 Please update references for sources of data files if they are not already in the "Refrences" document. They will be used in the report
