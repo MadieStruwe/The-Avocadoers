@@ -27,25 +27,56 @@ store if the year was good or bad
     potetially instead of year, use quarters, or by month
 '''
 
-def ReadInAttributeFromCSV(fileName, attribute):
-	attributeValues = []
-	f = open(fileName, 'r')
-	# Create a csv reader that stores the each column of the first line of the file
-	# as keys and then the rest of the lines of each column as values for those keys
-	reader = csv.DictReader(f)
-	for row in reader:
-		if attribute in row:
-			if attribute != 'date':
-				value = float(row[attribute])
-				attributeValues.append(value)
-			else:
-				date = datetime.datetime.strptime(row[attribute],'%Y/%m/%d')
-				attributeValues.append(date)
-	f.close()
-	return attributeValues
+'''
+Function to find avocado harvested data
+	input file, columns to drop 
+	('path/to/file/filename.ext', ['some','array'])
+	Function will read in a specified csv file
+	and drop an empty column where are the entries are NaN
+	Function will also filer for California and make the 
+	data set condensed with only relevent data
+'''	
+def Avo_Data(file_name, col_to_drop):
+	#read in the dataset
+	data_set = pd.read_csv(file_name)
+	#filter out null columns and for California
+	data_set = data_set.dropna(axis='columns', how='all')
+	data_set = data_set[(data_set['State'].str.contains('CA'))]
+	data_set = data_set.drop(col_to_drop, axis=1)
+	#if " (D)" or " (Z)" is in a row, drop it
+	data_set = data_set[~data_set['Value'].isin([' (D)', ' (Z)'])]
+	#put the data in an array of touples
+	subset = data_set[['Year','State','Value']]
+	tuples = [tuple(x) for x in subset.values]
+	'''TO DO: 
+	take the Value values and cast to a float
+	if there are multiple same years, add the values in Value together
+	and store the sum at the value'''
+	#print it so it looks pretty
+	for i in range(0, len(tuples)):
+		print (tuples[i])
+	return 0
 
 def main():
-	print ("Hello World")
+	#columns to drop from avocado yeild table
+	col_to_drop_AVO_YEILD_TABLE = ['Program','Period','Geo Level',\
+			'State ANSI', 'watershed_code','Commodity', \
+			'Data Item', 'Domain','Domain Category']
+	# call function to do stuff
+	print ('\n Avocados_Yeild_Measured_In_Tons_Per_Acre \n')
+	Avo_Data('Data_Files/Data_From_USDA/Avocados_Yeild_Measured_In_Tons_Per_Acre.csv', \
+	 	col_to_drop_AVO_YEILD_TABLE)
+	print ('\n Avocados_Acres_Bearing \n')
+	Avo_Data('Data_Files/Data_From_USDA/Avocados_Acres_Bearing.csv', \
+	 	col_to_drop_AVO_YEILD_TABLE)
+	print ('\n Avocados_Acres_Non_Bearing \n')
+	Avo_Data('Data_Files/Data_From_USDA/Avocados_Acres_Non_Bearing.csv', \
+	 	col_to_drop_AVO_YEILD_TABLE)
+	'''TO DO:
+	sum the acres bearing and non-bearing together to get total available
+	land per year. 
+	then find the percentage of how much land was bearing with
+	(bearing/total land)*100'''
 
 if __name__ == '__main__':
 	main()
