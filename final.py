@@ -40,18 +40,20 @@ def Avo_Data(file_name, col_to_drop):
 	#read in the dataset
 	data_set = pd.read_csv(file_name)
 	#filter out null columns and for California
+	#and for progrm to be a survey
 	data_set = data_set.dropna(axis='columns', how='all')
-	data_set = data_set[(data_set['State'].str.contains('CA'))]
+	data_set = data_set[(data_set['State'].str.contains('CA')) \
+						&(data_set['Program'].str.contains('SUR'))]
 	data_set = data_set.drop(col_to_drop, axis=1)
 	#if " (D)" or " (Z)" is in a row, drop it
 	data_set = data_set[~data_set['Value'].isin([' (D)', ' (Z)'])]
+	# drop data from 2002, so we can look at years 2007-2017
+	data_set = data_set[~data_set['Year'].isin(['2002'])]
 	#put the data in an array of touples
 	subset = data_set[['Year','State','Value']]
 	tuples = [tuple(x) for x in subset.values]
-	'''TO DO: 
-	take the Value values and cast to a float
-	if there are multiple same years, add the values in Value together
-	and store the sum at the value'''
+	#convert the value fata to floats
+	tuples = [(x[0],x[1],float(x[2].replace(",",""))) for x in tuples]
 	#print it so it looks pretty
 	for i in range(0, len(tuples)):
 		print (tuples[i])
@@ -69,14 +71,14 @@ def main():
 	print ('\n Avocados_Acres_Bearing \n')
 	Avo_Data('Data_Files/Data_From_USDA/Avocados_Acres_Bearing.csv', \
 	 	col_to_drop_AVO_YEILD_TABLE)
-	print ('\n Avocados_Acres_Non_Bearing \n')
-	Avo_Data('Data_Files/Data_From_USDA/Avocados_Acres_Non_Bearing.csv', \
-	 	col_to_drop_AVO_YEILD_TABLE)
+	#print ('\n Avocados_Acres_Non_Bearing \n')
+	#Avo_Data('Data_Files/Data_From_USDA/Avocados_Acres_Non_Bearing.csv', \
+	# 	col_to_drop_AVO_YEILD_TABLE)
 	'''TO DO:
-	sum the acres bearing and non-bearing together to get total available
-	land per year. 
-	then find the percentage of how much land was bearing with
-	(bearing/total land)*100'''
+	find what a good yeild for acocados be. compare to the 
+	data that i have
+	or, normalize the data, ith relation to the amount harvested
+	to the acres available'''
 
 if __name__ == '__main__':
 	main()
