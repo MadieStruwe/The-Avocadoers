@@ -1,4 +1,4 @@
-#!python3
+#!python3.6
 """
 aggregate_temps.py
 
@@ -9,11 +9,12 @@ Each day will be then assigned a score based on the data for that day.
 
 Outputs cleaned data to <same_file_name>_aggregated.csv
 """
-import argparse
-import csv
-import collections
 from datetime import datetime
+import argparse
+import collections
+import csv
 import logging
+import statistics
 import sys
 import time
 
@@ -21,9 +22,10 @@ LOG_LEVELS = [logging.CRITICAL, logging.ERROR, logging.WARN, logging.INFO, loggi
 INTERESTED_KEYS = [
     "STATION_NAME",
     "DATE",
-    "NORMALIZED_TEMPERATURE",
+    "MEAN",
+    "STDDEV",
+    "TEMPS"
 ]
-
 
 def set_up_logger(verbose):
     try:
@@ -47,7 +49,7 @@ def main():
     parser.add_argument(
         "file", nargs="*", type=argparse.FileType("r"), help="The name(s) of a file to normalize."
     )
-    parser.add_argument("-v", "--verbose", action="count", default=3)
+    parser.add_argument("-v", "--verbose", action="count", default=5)
     args = parser.parse_args()
     logger = set_up_logger(args.verbose)
     logger.debug(f"ARGS: {args}")
@@ -58,22 +60,41 @@ def main():
         this_csv_reader = csv.DictReader(dirty_csv)
         for row in this_csv_reader:
         	# 2014-08-02 06:51
+            this_station = row["STATION_NAME"]
             this_date = row["DATE"]
-            this_datetime = datetime.strptime(this_date, '%Y-%m-%d %H:%M')
+            try:
+                this_datetime = datetime.strptime(this_date, '%Y-%m-%d %H:%M')
+            except ValueError: 
+                # Probably did not match the format string; use the fallback
+                # Notably the Ventura County data was of this format
+                this_datetime = datetime.strptime(this_date, '%m/%d/%Y %H:%M')
             this_datetime_string = this_datetime.strftime("%Y-%m-%d").strip()
             if this_datetime_string not in date_to_hourly_times_mapping:
             	date_to_hourly_times_mapping[this_datetime_string] = []
-            date_to_hourly_times_mapping[this_datetime_string].append(row["NORMALIZED_TEMPERATURE"])
-            break
+            date_to_hourly_times_mapping[this_datetime_string].append(float(row["NORMALIZED_TEMPERATURE"]))
+        
+        logger.info("Finished aggregating daily temperature metrics!")
+        logger.info("Now calculating daily mean/standard deviations...")
+        clean_rows = []
+        for date_string, hourly_temps_list in date_to_hourly_times_mapping.items():
+            day_average = statistics.mean(hourly_temps_list)
+            day_stddev = statistics.pstdev(hourly_temps_list)
+            this_day_row = {    
+                "STATION_NAME": this_station,
+                "DATE": date_string,
+                "MEAN": "{0:.3f}".format(day_average),
+                "STDDEV": "{0:.3f}".format(day_stddev),
+                "TEMPS": ", ".join(str(x) for x in hourly_temps_list)
+            }
+            clean_rows.append(this_day_row)
+
         this_file_dur = time.time() - this_file_start
         logger.info(f"Processing this file took {this_file_dur:.2f} seconds.")
-        logger.debug(f"CLEAN ROWS: {clean_rows[:10]}")
 
-        continue
-        clean_file_name = dirty_csv.name.split(".")[0] + "_aggregated" + ".csv"
+        clean_file_name = dirty_csv.name.replace("normalized", "aggregated")
         logger.info(f"Writing out to file named: {clean_file_name}!")
         with open(clean_file_name, "w", newline="") as cleanfile:
-            this_writer = csv.DictWriter(cleanfile, fieldnames=INTERESTED_KEYS)  # CHANGE THIS
+            this_writer = csv.DictWriter(cleanfile, fieldnames=INTERESTED_KEYS) 
             this_writer.writeheader()
             for row in clean_rows:
                 this_writer.writerow(row)
