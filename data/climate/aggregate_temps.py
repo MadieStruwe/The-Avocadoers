@@ -4,8 +4,7 @@ aggregate_temps.py
 
 Usage: python3 aggregate_temps.py <list of .csv files>
 
-Aggregates weather data up from the hourly dimension to the daily dimension, reporting daily mean and standard deviation.
-Each day will be then assigned a score based on the data for that day.
+Aggregates weather data up from the hourly dimension to the weekly dimension, reporting weekly mean and standard deviation.
 
 Outputs cleaned data to <same_file_name>_aggregated.csv
 """
@@ -45,7 +44,7 @@ def set_up_logger(verbose):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Aggregate and assign daily scores for the passed-in .csv file(s)."
+        description="Aggregate data to the weekly level for the passed-in .csv file(s)."
     )
     parser.add_argument(
         "file", nargs="*", type=argparse.FileType("r"), help="The name(s) of a file to normalize."

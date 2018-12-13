@@ -80,7 +80,7 @@ Outputs cleaned data to `<same_file_name>_aggregated.csv`
 $ python3.6 aggregate_temps.py -h
 usage: aggregate_temps.py [-h] [-v] [file [file ...]]
 
-Aggregate and assign daily scores for the passed-in .csv file(s).
+Aggregate weather data to a weekly summary level and report mean/standard deviation for that week in the year.
 
 positional arguments:
   file           The name(s) of a file to normalize.
@@ -93,11 +93,47 @@ optional arguments:
 #### Output
 
 ```bash
-$ python3.6 aggregate_temps.py normalized/VenturaCounty_CamarilloAirport_normalized.csv
+$ python3.6 aggregate_temps.py normalized/LosAngeles_LAX_normalized.csv normalized/All2007_normalized.csv normalized/SanBernadinoCounty_SanBernadinoInternational_normalized.csv normalized
+/SanDiegoCounty_SanDiegoInternationalAirport_normalized.csv normalized/SantaBarbara_SantaBarbaraMunicipal_normalized.csv normalized/VenturaCounty_CamarilloAirport_normalized.csv
+[INFO]  Working on normalized/LosAngeles_LAX_normalized.csv.
+[INFO]  Finished aggregating weekly temperature metrics!
+[INFO]  Now calculating weekly mean/standard deviations...
+[INFO]  Processing this file took 2.29 seconds.
+[INFO]  Writing out to file named: aggregated/LosAngeles_LAX_aggregated.csv!
+[INFO]  Done writing file.
+[INFO]  Done processing file normalized/LosAngeles_LAX_normalized.csv!
+[INFO]  Working on normalized/All2007_normalized.csv.
+[INFO]  Finished aggregating weekly temperature metrics!
+[INFO]  Now calculating weekly mean/standard deviations...
+[INFO]  Processing this file took 0.50 seconds.
+[INFO]  Writing out to file named: aggregated/All2007_aggregated.csv!
+[INFO]  Done writing file.
+[INFO]  Done processing file normalized/All2007_normalized.csv!
+[INFO]  Working on normalized/SanBernadinoCounty_SanBernadinoInternational_normalized.csv.
+[INFO]  Finished aggregating weekly temperature metrics!
+[INFO]  Now calculating weekly mean/standard deviations...
+[INFO]  Processing this file took 0.75 seconds.
+[INFO]  Writing out to file named: aggregated/SanBernadinoCounty_SanBernadinoInternational_aggregated.csv!
+[INFO]  Done writing file.
+[INFO]  Done processing file normalized/SanBernadinoCounty_SanBernadinoInternational_normalized.csv!
+[INFO]  Working on normalized/SanDiegoCounty_SanDiegoInternationalAirport_normalized.csv.
+[INFO]  Finished aggregating weekly temperature metrics!
+[INFO]  Now calculating weekly mean/standard deviations...
+[INFO]  Processing this file took 2.61 seconds.
+[INFO]  Writing out to file named: aggregated/SanDiegoCounty_SanDiegoInternationalAirport_aggregated.csv!
+[INFO]  Done writing file.
+[INFO]  Done processing file normalized/SanDiegoCounty_SanDiegoInternationalAirport_normalized.csv!
+[INFO]  Working on normalized/SantaBarbara_SantaBarbaraMunicipal_normalized.csv.
+[INFO]  Finished aggregating weekly temperature metrics!
+[INFO]  Now calculating weekly mean/standard deviations...
+[INFO]  Processing this file took 2.28 seconds.
+[INFO]  Writing out to file named: aggregated/SantaBarbara_SantaBarbaraMunicipal_aggregated.csv!
+[INFO]  Done writing file.
+[INFO]  Done processing file normalized/SantaBarbara_SantaBarbaraMunicipal_normalized.csv!
 [INFO]  Working on normalized/VenturaCounty_CamarilloAirport_normalized.csv.
-[INFO]  Finished aggregating daily temperature metrics!
-[INFO]  Now calculating daily mean/standard deviations...
-[INFO]  Processing this file took 3.54 seconds.
+[INFO]  Finished aggregating weekly temperature metrics!
+[INFO]  Now calculating weekly mean/standard deviations...
+[INFO]  Processing this file took 2.91 seconds.
 [INFO]  Writing out to file named: aggregated/VenturaCounty_CamarilloAirport_aggregated.csv!
 [INFO]  Done writing file.
 [INFO]  Done processing file normalized/VenturaCounty_CamarilloAirport_normalized.csv!
