@@ -21,7 +21,8 @@ import time
 LOG_LEVELS = [logging.CRITICAL, logging.ERROR, logging.WARN, logging.INFO, logging.DEBUG]
 INTERESTED_KEYS = [
     "STATION_NAME",
-    "DATE",
+    "YEAR",
+    "WEEK OF YEAR",
     "MEAN",
     "STDDEV",
     "TEMPS"
@@ -68,23 +69,26 @@ def main():
                 # Probably did not match the format string; use the fallback
                 # Notably the Ventura County data was of this format
                 this_datetime = datetime.strptime(this_date, '%m/%d/%Y %H:%M')
-            this_datetime_string = this_datetime.strftime("%Y-%m-%d").strip()
+            this_datetime_string = this_datetime.strftime("%Y #%U").strip()
             if this_datetime_string not in date_to_hourly_times_mapping:
             	date_to_hourly_times_mapping[this_datetime_string] = []
             date_to_hourly_times_mapping[this_datetime_string].append(float(row["NORMALIZED_TEMPERATURE"]))
         
-        logger.info("Finished aggregating daily temperature metrics!")
-        logger.info("Now calculating daily mean/standard deviations...")
+        logger.info("Finished aggregating weekly temperature metrics!")
+        logger.info("Now calculating weekly mean/standard deviations...")
         clean_rows = []
         for date_string, hourly_temps_list in date_to_hourly_times_mapping.items():
             day_average = statistics.mean(hourly_temps_list)
             day_stddev = statistics.pstdev(hourly_temps_list)
+            this_year = date_string.split(" ")[0]
+            this_week_num = date_string.split(" ")[1][1:]
             this_day_row = {    
                 "STATION_NAME": this_station,
-                "DATE": date_string,
+                "YEAR": this_year,
+                "WEEK OF YEAR": this_week_num,
                 "MEAN": "{0:.3f}".format(day_average),
                 "STDDEV": "{0:.3f}".format(day_stddev),
-                "TEMPS": ", ".join(str(x) for x in hourly_temps_list)
+                "TEMPS": str(hourly_temps_list)
             }
             clean_rows.append(this_day_row)
 
