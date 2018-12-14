@@ -1,10 +1,17 @@
 # The-Avocadoers
-Repo for CSCI 4502/5502 Final Project 
+Repo for CSCI 4502/5502 Final Project.
 
-I am running python3 for the code. Please ensure you are as well to avoid getting errors.
+Team Members:
 
-Please put changes in a branch and then merge the branch later
+- Evan Lee ([@Archetypically](https://github.com/Archetypically)) - CSCI-5502
+- Hector Sanchez - CSCI-4502
+- Madie Struwe ([@MadieStruwe](https://github.com/MadieStruwe)) - CSCI-4502.
 
-Please update references for sources of data files if they are not already in the "Refrences" document. They will be used in the report
+You can find all data in the apt-ly named `data` directory. 
 
-Please put csv files in the Data_Files folder so they are together, and it will be easier to access the data in our final project
+## Data
+
+### Climate
+
+The climate data is sourced from NOAA and parsed/aggregated using the two python scripts found in `data/climate/*.py`.
+See `data/climate/README.md` for more information.
